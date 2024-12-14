@@ -179,7 +179,41 @@ public class Program
     {
         var carAuctionManager = new CarAuctionManagementSystem();
 
+        var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+        var v2 = new Sudan(2, "Honda", "Civic", 2020, 20000, 3);
 
+        carAuctionManager.AddVehicle(v1);
+        Console.WriteLine($"Adding Volkwagen Golf to inventory...");
+        carAuctionManager.AddVehicle(v2);
+        Console.WriteLine($"Adding Honda Civic to inventory...");
+
+        Console.WriteLine($"Checking inventory...");
+
+        foreach (var vehicle in carAuctionManager._vehicleInventory)
+        {
+            Console.WriteLine($"Vehicle {vehicle.Id}: {vehicle.Manufacturer} {vehicle.Model}, year: {vehicle.Year}, starting bid: {vehicle.StartingBid}");
+        }
+
+        Console.WriteLine($"Searching for Volkwagen...");
+
+        var searchResults = carAuctionManager.SearchVehicles(manufaturer: "Volkswagen");
+
+        foreach (var vehicle in searchResults)
+        {
+            Console.WriteLine($"Vehicle {vehicle.Id}: {vehicle.Manufacturer} {vehicle.Model}, year: {vehicle.Year}, starting bid: {vehicle.StartingBid}");
+        }
+
+        carAuctionManager.StartAuction(1);
+        Console.WriteLine($"Starting aution for the {carAuctionManager._auctions[1].Vehicle.Manufacturer} {carAuctionManager._auctions[1].Vehicle.Model}");
+        
+        carAuctionManager.PlaceBid(1, 16000, "Renato");
+        Console.WriteLine($"{carAuctionManager._auctions[1].HighestBid} from {carAuctionManager._auctions[1].HighestBidder}");
+        
+        carAuctionManager.PlaceBid(1, 17000, "Ana");
+        Console.WriteLine($"{carAuctionManager._auctions[1].HighestBid} from {carAuctionManager._auctions[1].HighestBidder}");
+        
+        carAuctionManager.CloseAuction(1);
+        Console.WriteLine($"Auction Closed");
     }
 }
 
