@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-
 public class Vehicle
 {
 	public int Id { get; set; }
@@ -70,7 +68,7 @@ public class Auction
     public Vehicle Vehicle { get; set; }
     public bool IsActive { get; set; }
     public decimal HighestBid { get; set; }
-    public decimal HighestBidder { get; set; }
+    public string HighestBidder { get; set; }
 
     public Auction(Vehicle vehicle)
     {
@@ -122,18 +120,18 @@ public class CarAuctionManagementSystem
     {
         if (_vehicleInventory.Any(v => v.Id == vehicle.Id))
         {
-            throw new Exception("There is already a vehicle with this ID.")
+            throw new Exception("There is already a vehicle with this ID.");
         }
         _vehicleInventory.Add(vehicle);
     }
 
-    public IEnumerable<Vehicle> SearchVehicles(string type, string manufaturer, string model, int year)
+    public IEnumerable<Vehicle> SearchVehicles(string type = null, string manufaturer = null, string model = null, int? year = null)
     {
         return _vehicleInventory.Where(v =>
-            v.GetType().Name == type &&
-            v.Manufacturer == manufaturer &&
-            v.Model == model &&
-            v.Year == year);
+            (type == null || v.GetType().Name == type) &&
+            (manufaturer == null || v.Manufacturer == manufaturer) &&
+            (model == null || v.Model == model) &&
+            (year == null || v.Year == year));
     }
 
     public void StartAuction(int vehicleId)
@@ -183,7 +181,9 @@ public class Program
 {
     public static void Main()
     {
-        
+        var carAuctionManager = new CarAuctionManagementSystem();
+
+
     }
 }
 
