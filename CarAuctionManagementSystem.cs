@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 public class Vehicle
@@ -62,3 +64,36 @@ public class Truck : Vehicle
         LoadCapacity = loadCapacity;
     }
 }
+
+public class CarAuctionManagementSystem
+{
+    public List<Vehicle> _auctionInventory = new List<Vehicle>();
+   
+    public void AddVehicle(Vehicle vehicle)
+    {
+        if (_auctionInventory.Any(v => v.Id == vehicle.Id))
+        {
+            throw new Exception("There is already a vehicle with this ID.")
+        }
+        _auctionInventory.Add(vehicle);
+    }
+
+    public IEnumerable<Vehicle> SearchVehicles(string type, string manufaturer, string model, int year) 
+    {
+        return _auctionInventory.Where(v =>
+            v.GetType().Name == type &&
+            v.Manufacturer == manufaturer &&
+            v.Model == model &&
+            v.Year == year);
+    }
+
+
+public class Program
+{
+    public static void Main()
+    {
+        
+    }
+}
+
+
