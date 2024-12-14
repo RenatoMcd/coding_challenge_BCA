@@ -143,11 +143,7 @@ public class CarAuctionManagementSystem
             throw new Exception("There is no vehicle with this ID in the inventory.");
         }
         
-        if (_auctions.ContainsKey(vehicleId))
-        {
-            throw new Exception("This vehicle is already in an active auction.");
-        }
-        else
+        if (!_auctions.ContainsKey(vehicleId))
         {
             _auctions[vehicleId] = new Auction(vehicle);
         }

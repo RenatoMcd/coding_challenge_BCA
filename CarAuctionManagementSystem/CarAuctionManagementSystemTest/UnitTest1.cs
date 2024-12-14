@@ -55,7 +55,7 @@ namespace CarAuctionManagementSystemTest
         }
 
         [TestMethod]
-        public void TestSearchVehicle()
+        public void TestSearchVehicle_Success()
         {
             var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
             _test.AddVehicle(v1);
@@ -92,6 +92,126 @@ namespace CarAuctionManagementSystemTest
             var result3 = _test.SearchVehicles(type: "Sudan");
 
             Assert.AreEqual(0, result3.Count());
+        }
+
+        [TestMethod]
+        public void TestAuctionStart_Success()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.StartAuction(1);
+
+            Assert.IsTrue(_test._auctions[1].IsActive);
+
+            var v2 = new Hatchback(2, "Volkswagen", "Polo", 2024, 25000, 5);
+            _test.AddVehicle(v2);
+            _test.StartAuction(2);
+
+            Assert.IsTrue(_test._auctions[1].IsActive);
+            Assert.IsTrue(_test._auctions[2].IsActive);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestAuctionStart_FailNoVehicle()
+        {
+            _test.StartAuction(1);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestAuctionStart_FailAlreadyStarted()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.StartAuction(1);
+            _test.StartAuction(1);
+        }
+
+        [TestMethod]
+        public void TestAuctionClose_Success()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.StartAuction(1);
+            _test.CloseAuction(1);
+
+            Assert.IsFalse(_test._auctions[1].IsActive);
+
+            var v2 = new Hatchback(2, "Volkswagen", "Polo", 2024, 25000, 5);
+            _test.AddVehicle(v2);
+
+            _test.StartAuction(1);
+            _test.StartAuction(2);
+
+            _test.CloseAuction(2);
+            Assert.IsTrue(_test._auctions[1].IsActive);
+            Assert.IsFalse(_test._auctions[2].IsActive);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestAuctionClose_FailNoAuctionStarted()
+        {
+            _test.CloseAuction(1);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestAuctionClose_FailAlreadyClosed()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.StartAuction(1);
+            _test.CloseAuction(1);
+            _test.CloseAuction(1);
+        }
+
+        [TestMethod]
+        public void TestPlaceBid_Success()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.StartAuction(1);
+
+            _test.PlaceBid(1, 15100, "Renato");
+
+            Assert.AreEqual(15100, _test._auctions[1].HighestBid);
+            Assert.AreEqual("Renato", _test._auctions[1].HighestBidder);
+
+            _test.PlaceBid(1, 15200, "Ana");
+
+            Assert.AreEqual(15200, _test._auctions[1].HighestBid);
+            Assert.AreEqual("Ana", _test._auctions[1].HighestBidder);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestPlaceBid_FailLowBid()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.StartAuction(1);
+
+            _test.PlaceBid(1, 14000, "Renato");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestPlaceBid_FailNoVehicleInAuction()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.PlaceBid(2, 15100, "Renato");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestPlaceBid_FailNoAuctionStarted()
+        {
+            var v1 = new Hatchback(1, "Volkswagen", "Golf", 2022, 15000, 5);
+            _test.AddVehicle(v1);
+            _test.PlaceBid(1, 15100, "Renato");
         }
     }
 }
